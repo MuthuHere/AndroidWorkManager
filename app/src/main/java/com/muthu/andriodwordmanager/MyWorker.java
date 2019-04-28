@@ -14,7 +14,8 @@ import androidx.work.WorkerParameters;
 
 public class MyWorker extends Worker {
 
-    public static final String KEY_TASK_OUTPUT = "key_task_output";
+    public static final String KEY_RETURN_DATA = "key_return_data";
+
 
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -23,14 +24,21 @@ public class MyWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        String description = "Sample data";
 
-        displayNotification("Hey I am your work", "Task executed");
+        Data data = getInputData();
+        if (data != null) {
+            description = data.getString(MainActivity.KEY_DATA_DESCRIPTION);
+        }
 
-        Data data1 = new Data.Builder()
-                .putString(KEY_TASK_OUTPUT, "Task Finished Successfully")
-                .build();
+        displayNotification("Hey I am your work", description);
 
-        setOutputData(data1);
+
+        Data dataToSend = new Data.Builder()
+                .putString(KEY_RETURN_DATA,"Worker status RESULT executed").build();
+
+
+        setOutputData(dataToSend);
 
         return Result.SUCCESS;
     }
