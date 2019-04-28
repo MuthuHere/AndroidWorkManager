@@ -24,8 +24,7 @@ In this codeset we are going to see how to use WorkManager (is the new Android J
                 .build();
                 
         
-### Create MyWorker class which is inherited by Worker class
-    and do get data from MainActivity
+### Create MyWorker class which is inherited by Worker class and do get data from MainActivity
     
     //get data from MainActivity
     
