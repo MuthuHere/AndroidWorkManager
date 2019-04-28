@@ -1,17 +1,20 @@
 package com.muthu.andriodwordmanager;
 
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
+import androidx.work.Data;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 public class MyWorker extends Worker {
 
+    public static final String KEY_TASK_OUTPUT = "key_task_output";
 
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -21,29 +24,33 @@ public class MyWorker extends Worker {
     @Override
     public Result doWork() {
 
-        triggerNotification("Hey, I am Your work","Work Finished");
+        displayNotification("Hey I am your work", "Task executed");
 
-        return Result.Success;
+        Data data1 = new Data.Builder()
+                .putString(KEY_TASK_OUTPUT, "Task Finished Successfully")
+                .build();
+
+        setOutputData(data1);
+
+        return Result.SUCCESS;
     }
 
+    private void displayNotification(String task, String desc) {
 
-    private void triggerNotification(String title, String description){
+        NotificationManager manager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        if(android.os.Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
-            NotificationChannel channel = new NotificationChannel("myNotifyID","myNotifyID",NotificationManager.IMPORTANCE_DEFAULT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("simplifiedcoding", "simplifiedcoding", NotificationManager.IMPORTANCE_DEFAULT);
             manager.createNotificationChannel(channel);
         }
 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "simplifiedcoding")
+                .setContentTitle(task)
+                .setContentText(desc)
+                .setSmallIcon(R.mipmap.ic_launcher);
 
+        manager.notify(1, builder.build());
 
-        NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(getApplicationContext(),"myNotifyID")
-                        .setContentTitle(title)
-                        .setContentText("")
-                        .setSmallIcon(R.mipmap.ic_launcher);
-
-        manager.notify(1,builder);
     }
 }
