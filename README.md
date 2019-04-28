@@ -41,3 +41,28 @@ In this codeset we are going to see how to use WorkManager (is the new Android J
 
         Data dataToSend = new Data.Builder()
                 .putString(KEY_RETURN_DATA,"Worker status RESULT executed").build();
+                
+                
+                
+#### Receving Result from Worker class to MainActivity
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(oneTimeWorkRequest.getId()).observe(this, new Observer<WorkInfo>() {
+            @Override
+            public void onChanged(@Nullable WorkInfo workInfo) {
+
+                if (workInfo!=null && workInfo.getState().isFinished()){
+                    Data resultData = workInfo.getOutputData();
+                    if (resultData != null) {
+                        String responseString = resultData.getString(KEY_RETURN_DATA);
+
+                        tvStatus.append(responseString);
+
+                    }
+
+
+                }
+                String status = workInfo.getState().name();
+                tvStatus.append(status + "\n");
+
+            }
+        });
